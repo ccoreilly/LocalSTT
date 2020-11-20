@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.io.IOException;
 
 public class VoskRecognitionService extends RecognitionService implements RecognitionListener {
-    private final static String TAG = VoskRecognitionService.class.getName();
+    private final static String TAG = VoskRecognitionService.class.getSimpleName();
     private KaldiRecognizer recognizer;
     private SpeechService speechService;
     private Model model;
@@ -38,13 +38,13 @@ public class VoskRecognitionService extends RecognitionService implements Recogn
     @Override
     protected void onCancel(Callback callback) {
         Log.i(TAG, "onCancel");
-        results(new Bundle());
+        results(new Bundle(), true);
     }
 
     @Override
     protected void onStopListening(Callback callback) {
         Log.i(TAG, "onStopListening");
-        results(new Bundle());
+        results(new Bundle(), true);
     }
 
     private void runRecognizerSetup(final Intent intent) {
@@ -108,10 +108,14 @@ public class VoskRecognitionService extends RecognitionService implements Recogn
         }
     }
 
-    private void results(Bundle bundle) {
-        speechService.cancel();
+    private void results(Bundle bundle, boolean isFinal) {
         try {
-            mCallback.results(bundle);
+            if (isFinal) {
+                speechService.cancel();
+                mCallback.results(bundle);
+            } else {
+                mCallback.partialResults(bundle);
+            }
         } catch (RemoteException e) {
             // empty
         }
@@ -149,7 +153,7 @@ public class VoskRecognitionService extends RecognitionService implements Recogn
             Gson gson = new Gson();
             Map<String, String> map = gson.fromJson(hypothesis, Map.class);
             String text = map.get("text");
-            results(createResultsBundle(text));
+            results(createResultsBundle(text), true);
         }
     }
 
@@ -160,7 +164,7 @@ public class VoskRecognitionService extends RecognitionService implements Recogn
             Gson gson = new Gson();
             Map<String, String> map = gson.fromJson(hypothesis, Map.class);
             String text = map.get("partial");
-            results(createResultsBundle(text));
+            results(createResultsBundle(text), false);
         }
     }
 

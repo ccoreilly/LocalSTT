@@ -5,6 +5,9 @@ repositories {
     maven {
         url  "https://dl.bintray.com/alphacep/vosk"
     }
+    maven {
+        url "https://jitpack.io"
+    }
 }
 
 android {
@@ -31,4 +34,10 @@ dependencies {
     implementation 'com.alphacep:vosk-android:0.3.15'
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'org.mozilla.deepspeech:libdeepspeech:0.8.2'
+    implementation 'com.github.gkonovalov:android-vad:1.0.0'
 }
+
+ant.importBuild 'assets.xml'
+preBuild.dependsOn(list, checksum)
+clean.dependsOn(clean_assets)
