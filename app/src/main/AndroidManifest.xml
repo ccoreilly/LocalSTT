@@ -8,8 +8,82 @@
     <application
         android:allowBackup="false"
         android:icon="@drawable/ic_service_trigger"
-        android:label="@string/app_name" >
+        android:label="@string/app_name"
+        android:launchMode="standard"
+        android:theme="@style/AppTheme">
 
+        <activity
+            android:name=".SpeechActivity">
+            <intent-filter>
+                <action android:name="android.speech.action.RECOGNIZE_SPEECH" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.speech.action.WEB_SEARCH" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+            <!-- input/output: Nothing -->
+            <!-- Samsung Galaxy SII launches VOICE_COMMAND when HOME is double-clicked -->
+            <intent-filter>
+                <action android:name="android.intent.action.VOICE_COMMAND" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <!--
+            Action ASSIST (API 16)
+            Input: EXTRA_ASSIST_PACKAGE, EXTRA_ASSIST_CONTEXT. Output: nothing.
+
+            * "Search assistant" on CM10.2, which can be mapped to various buttons.
+            * Long press on the HOME button on Nexus 5X.
+            * Upper physical button on Huawei Watch 2.
+
+            The default ASSIST app is user-configurable on the phone but not on Wear,
+            i.e. on the phone the user can choose which app is started, e.g. when long-pressing
+            on the HOME button, and the filter priority plays no role. On Wear the choice
+            is based only on the priority.
+            We set it to lower than default to let the other guy win. This is probably
+            specific to Huawei Watch 2 with its weird setup,
+            where the upper button launches ASSIST (and this cannot be
+            changed) and the lower button can open any app (other than Google Assist).
+            -->
+            <intent-filter android:priority="-10">
+                <action android:name="android.intent.action.ASSIST" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <!-- input/output: Nothing -->
+            <!-- API 3 -->
+            <!-- "Voice search" on CM10.2, which can be mapped to various buttons -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH_LONG_PRESS" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+            <!-- input/output: Nothing -->
+            <intent-filter>
+                <action android:name="android.speech.action.VOICE_SEARCH_HANDS_FREE" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <!-- TODO: future work
+            <intent-filter>
+                <action android:name="android.provider.MediaStore.RECORD_SOUND" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+        </activity>
+        
         <service
             android:name=".VoskRecognitionService"
             android:icon="@drawable/ic_service_trigger"
