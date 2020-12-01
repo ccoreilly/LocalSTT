@@ -123,7 +123,7 @@ public class SpeechActivity extends AppCompatActivity {
 
             @Override
             public void onError(int i) {
-
+                showError();
             }
 
             @Override
@@ -210,10 +210,6 @@ public class SpeechActivity extends AppCompatActivity {
 
             Intent intent = new Intent();
             intent.putExtras(bundle);
-            // This is for Google Maps, YouTube, ...
-            // intent.putExtra(SearchManager.QUERY, result);
-
-            // Display a toast with the transcription.
             handler.sendMessage(
                     createMessage(MSG_TOAST, String.format(getString(R.string.toastForwardedMatches), results.get(0))));
             try {
@@ -228,6 +224,10 @@ public class SpeechActivity extends AppCompatActivity {
         finish();
     }
 
+    private void showError() {
+        toast("Error loading recognizer");
+    }
+    
     private void setResultIntent(final Handler handler, List<String> matches) {
         Intent intent = new Intent();
         intent.putStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS, new ArrayList<>(matches));

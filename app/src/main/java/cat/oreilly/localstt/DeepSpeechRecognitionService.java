@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.RemoteException;
+import android.os.Handler;
+import android.os.Looper;
 import android.speech.RecognitionService;
 import android.util.Log;
 import android.media.AudioFormat;
@@ -17,10 +19,14 @@ import org.mozilla.deepspeech.libdeepspeech.DeepSpeechModel;
 import java.io.File;
 import java.util.Map;
 import java.util.ArrayList;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.io.IOException;
 
 public class DeepSpeechRecognitionService extends RecognitionService implements RecognitionListener {
     private final static String TAG = DeepSpeechRecognitionService.class.getSimpleName();
+    private final Handler handler = new Handler(Looper.getMainLooper());
+    private final Executor executor = Executors.newSingleThreadExecutor();
     private DeepSpeechModel model;
     private DeepSpeechService speechService;
 
@@ -30,7 +36,7 @@ public class DeepSpeechRecognitionService extends RecognitionService implements 
     protected void onStartListening(Intent intent, Callback callback) {
         mCallback = callback;
         Log.i(TAG, "onStartListening");
-        runRecognizerSetup(intent);
+        runRecognizerSetup();
     }
 
     @Override
@@ -45,10 +51,10 @@ public class DeepSpeechRecognitionService extends RecognitionService implements 
         results(new Bundle(), true);
     }
 
-    private void runRecognizerSetup(final Intent intent) {
-        new AsyncTask<Void, Void, Exception>() {
+    private void runRecognizerSetup() {
+        executor.execute(new Runnable() {
             @Override
-            protected Exception doInBackground(Void... params) {
+            public void run() {
                 try {
                     Assets assets = new Assets(DeepSpeechRecognitionService.this);
                     File assetDir = assets.syncAssets();
@@ -57,24 +63,20 @@ public class DeepSpeechRecognitionService extends RecognitionService implements 
                     model.enableExternalScorer(assetDir.toString() + "/deepspeech-catala/kenlm.scorer");
 
                     setupRecognizer();
-                } catch (IOException e) {
-                    return e;
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Exception result) {
-                if (result != null) {
-                    Log.e(TAG, "Failed to init recognizer " + result);
+                } catch (Exception e) {
+                    Log.e(TAG, "Failed to init recognizer ");
                     error(android.speech.SpeechRecognizer.ERROR_CLIENT);
-                } else {
-                    readyForSpeech(new Bundle());
-                    beginningOfSpeech();
-
                 }
+
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        readyForSpeech(new Bundle());
+                        beginningOfSpeech();
+                    }
+                });
             }
-        }.execute();
+        });
     }
 
     @Override

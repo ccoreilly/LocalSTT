@@ -3,6 +3,8 @@ package cat.oreilly.localstt;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.RemoteException;
 import android.speech.RecognitionService;
 import android.util.Log;
@@ -18,10 +20,14 @@ import org.kaldi.Vosk;
 import java.io.File;
 import java.util.Map;
 import java.util.ArrayList;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.io.IOException;
 
 public class VoskRecognitionService extends RecognitionService implements RecognitionListener {
     private final static String TAG = VoskRecognitionService.class.getSimpleName();
+    private final Handler handler = new Handler(Looper.getMainLooper());
+    private final Executor executor = Executors.newSingleThreadExecutor();
     private KaldiRecognizer recognizer;
     private SpeechService speechService;
     private Model model;
@@ -32,7 +38,7 @@ public class VoskRecognitionService extends RecognitionService implements Recogn
     protected void onStartListening(Intent intent, Callback callback) {
         mCallback = callback;
         Log.i(TAG, "onStartListening");
-        runRecognizerSetup(intent);
+        runRecognizerSetup();
     }
 
     @Override
@@ -47,36 +53,36 @@ public class VoskRecognitionService extends RecognitionService implements Recogn
         results(new Bundle(), true);
     }
 
-    private void runRecognizerSetup(final Intent intent) {
-        new AsyncTask<Void, Void, Exception>() {
+    private void runRecognizerSetup() {
+        executor.execute(new Runnable() {
             @Override
-            protected Exception doInBackground(Void... params) {
+            public void run() {
                 try {
-                    Assets assets = new Assets(VoskRecognitionService.this);
-                    File assetDir = assets.syncAssets();
-                    Vosk.SetLogLevel(0);
+                    if (model == null) {
+                        Assets assets = new Assets(VoskRecognitionService.this);
+                        File assetDir = assets.syncAssets();
+                        Vosk.SetLogLevel(0);
 
-                    model = new Model(assetDir.toString() + "/vosk-catala");
+                        Log.i(TAG, "Loading model");
+                        model = new Model(assetDir.toString() + "/vosk-catala");
+                    }
 
                     setupRecognizer();
-                } catch (IOException e) {
-                    return e;
-                }
-                return null;
-            }
 
-            @Override
-            protected void onPostExecute(Exception result) {
-                if (result != null) {
-                    Log.e(TAG, "Failed to init recognizer " + result);
+                } catch (Exception e) {
+                    Log.e(TAG, "Failed to init recognizer ");
                     error(android.speech.SpeechRecognizer.ERROR_CLIENT);
-                } else {
-                    readyForSpeech(new Bundle());
-                    beginningOfSpeech();
-
                 }
+
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        readyForSpeech(new Bundle());
+                        beginningOfSpeech();
+                    }
+                });
             }
-        }.execute();
+        });
     }
 
     @Override
@@ -91,9 +97,20 @@ public class VoskRecognitionService extends RecognitionService implements Recogn
 
     private void setupRecognizer() throws IOException {
         try {
-            recognizer = new KaldiRecognizer(model, 16000.0f);
-            speechService = new SpeechService(recognizer, 16000.0f);
-            speechService.addListener(this);
+            if (recognizer == null) {
+                Log.i(TAG, "Creating recognizer");
+
+                recognizer = new KaldiRecognizer(model, 16000.0f);
+            }
+
+            if (speechService == null) {
+                Log.i(TAG, "Creating speechService");
+
+                speechService = new SpeechService(recognizer, 16000.0f);
+                speechService.addListener(this);
+            } else {
+                speechService.cancel();
+            }
             speechService.startListening();
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
