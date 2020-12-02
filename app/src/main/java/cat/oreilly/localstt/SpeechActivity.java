@@ -103,7 +103,7 @@ public class SpeechActivity extends AppCompatActivity {
             @Override
             public void onBeginningOfSpeech() {
                 editText.setText("");
-                editText.setHint("Listening...");
+                editText.setHint(R.string.speaknow);
             }
 
             @Override
@@ -211,7 +211,7 @@ public class SpeechActivity extends AppCompatActivity {
             Intent intent = new Intent();
             intent.putExtras(bundle);
             handler.sendMessage(
-                    createMessage(MSG_TOAST, String.format(getString(R.string.toastForwardedMatches), results.get(0))));
+                    createMessage(MSG_TOAST, String.format(getString(R.string.recognized), results.get(0))));
             try {
                 Log.d(TAG, "Sending result via pendingIntent");
                 pendingIntent.send(this, AppCompatActivity.RESULT_OK, intent);

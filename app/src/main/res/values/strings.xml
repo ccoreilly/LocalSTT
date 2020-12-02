@@ -4,8 +4,8 @@
     <string name="app_name">LocalSTT</string>
     <string name="vosk_recognition_service">Kaldi/Vosk Recognizer</string>
     <string name="deepspeech_recognition_service">Deepspeech Recognizer</string>
-    <string name="toastForwardedMatches">Recognized: %1$s</string>
-    <string name="recognition">Speech recognition</string>
+    <string name="recognized">Recognized: %1$s</string>
     <string name="loading">Loading...</string>
+    <string name="speaknow">Start speaking now!</string>
 
 </resources>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">LocalSTT</string>
+    <string name="vosk_recognition_service">Reconeixement Kaldi/Vosk</string>
+    <string name="deepspeech_recognition_service">Reconeixement DeepSpeech</string>
+    <string name="recognized">Reconegut: %1$s</string>
+    <string name="loading">Carregant...</string>
+    <string name="speaknow">Comença a parlar!</string>
+
+</resources>
