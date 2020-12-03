@@ -1,0 +1,19 @@
+LocalSTT
+Copyright 2020 Ciaran O'Reilly
+
+The Initial Developer of the app/src/main/java/cat/oreilly/localstt/SpeechActivity.java, 
+is Kaarel Kaljurand (https://github.com/Kaljurand).
+Copyright 2011-2020, Institute of Cybernetics at Tallinn University of Technology
+
+The Initial Developer of the app/src/main/java/cat/oreilly/localstt/VoskRecognitionService.java, 
+is Alpha Cephei Inc (https://alphacephei.com/).
+Copyright 2019 Alpha Cephei Inc. All Rights Reserved.
+
+The Initial Developer of some parts of the application, which are copied from, derived from, or
+inspired by the Vosk Android Demo (https://github.com/alphacep/vosk-android-demo),
+is Alpha Cephei Inc (https://alphacephei.com/e).
+Copyright 2019 Alpha Cephei Inc. All Rights Reserved.
+
+The Vosk Catalan Model in app/src/main/assets/sync/vosk-catala
+was created by Alpha Cephei Inc (https://alphacephei.com/).
+Copyright 2020 Alpha Cephei Inc. All Rights Reserved.
