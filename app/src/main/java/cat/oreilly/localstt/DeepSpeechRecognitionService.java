@@ -15,23 +15,17 @@
 package cat.oreilly.localstt;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.os.Handler;
 import android.os.Looper;
 import android.speech.RecognitionService;
 import android.util.Log;
-import android.media.AudioFormat;
-import android.media.AudioRecord;
-import android.media.MediaRecorder;
 
-import org.kaldi.Assets;
-import org.kaldi.RecognitionListener;
+import org.vosk.android.RecognitionListener;
 import org.mozilla.deepspeech.libdeepspeech.DeepSpeechModel;
 
 import java.io.File;
-import java.util.Map;
 import java.util.ArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -164,6 +158,14 @@ public class DeepSpeechRecognitionService extends RecognitionService implements 
 
     @Override
     public void onResult(String hypothesis) {
+        if (hypothesis != null) {
+            Log.i(TAG, hypothesis);
+            results(createResultsBundle(hypothesis), true);
+        }
+    }
+
+    @Override
+    public void onFinalResult(String hypothesis) {
         if (hypothesis != null) {
             Log.i(TAG, hypothesis);
             results(createResultsBundle(hypothesis), true);

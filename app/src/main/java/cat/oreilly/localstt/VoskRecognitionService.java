@@ -17,7 +17,6 @@
 package cat.oreilly.localstt;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -26,12 +25,12 @@ import android.speech.RecognitionService;
 import android.util.Log;
 
 import com.google.gson.Gson;
-import org.kaldi.Assets;
-import org.kaldi.KaldiRecognizer;
-import org.kaldi.Model;
-import org.kaldi.RecognitionListener;
-import org.kaldi.SpeechService;
-import org.kaldi.Vosk;
+import org.vosk.Recognizer;
+import org.vosk.Model;
+import org.vosk.android.RecognitionListener;
+import org.vosk.android.SpeechService;
+import org.vosk.LibVosk;
+import org.vosk.LogLevel;
 
 import java.io.File;
 import java.util.Map;
@@ -44,7 +43,7 @@ public class VoskRecognitionService extends RecognitionService implements Recogn
     private final static String TAG = VoskRecognitionService.class.getSimpleName();
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final Executor executor = Executors.newSingleThreadExecutor();
-    private KaldiRecognizer recognizer;
+    private Recognizer recognizer;
     private SpeechService speechService;
     private Model model;
 
@@ -77,7 +76,7 @@ public class VoskRecognitionService extends RecognitionService implements Recogn
                     if (model == null) {
                         Assets assets = new Assets(VoskRecognitionService.this);
                         File assetDir = assets.syncAssets();
-                        Vosk.SetLogLevel(0);
+                        LibVosk.setLogLevel(LogLevel.INFO);
 
                         Log.i(TAG, "Loading model");
                         model = new Model(assetDir.toString() + "/vosk-catala");
@@ -111,23 +110,22 @@ public class VoskRecognitionService extends RecognitionService implements Recogn
         }
     }
 
-    private void setupRecognizer() throws IOException {
+    private void setupRecognizer() {
         try {
             if (recognizer == null) {
                 Log.i(TAG, "Creating recognizer");
 
-                recognizer = new KaldiRecognizer(model, 16000.0f);
+                recognizer = new Recognizer(model, 16000.0f);
             }
 
             if (speechService == null) {
                 Log.i(TAG, "Creating speechService");
 
                 speechService = new SpeechService(recognizer, 16000.0f);
-                speechService.addListener(this);
             } else {
                 speechService.cancel();
             }
-            speechService.startListening();
+            speechService.startListening(this);
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
@@ -171,7 +169,9 @@ public class VoskRecognitionService extends RecognitionService implements Recogn
     }
 
     private void error(int errorCode) {
-        speechService.cancel();
+        if (speechService != null) {
+            speechService.cancel();
+        }
         try {
             mCallback.error(errorCode);
         } catch (RemoteException e) {
@@ -181,6 +181,17 @@ public class VoskRecognitionService extends RecognitionService implements Recogn
 
     @Override
     public void onResult(String hypothesis) {
+        if (hypothesis != null) {
+            Log.i(TAG, hypothesis);
+            Gson gson = new Gson();
+            Map<String, String> map = gson.fromJson(hypothesis, Map.class);
+            String text = map.get("text");
+            results(createResultsBundle(text), true);
+        }
+    }
+
+    @Override
+    public void onFinalResult(String hypothesis) {
         if (hypothesis != null) {
             Log.i(TAG, hypothesis);
             Gson gson = new Gson();
@@ -210,6 +221,6 @@ public class VoskRecognitionService extends RecognitionService implements Recogn
     @Override
     public void onTimeout() {
         speechService.cancel();
-        speechService.startListening();
+        speechService.startListening(this);
     }
 }

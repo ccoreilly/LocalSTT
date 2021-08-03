@@ -16,9 +16,6 @@
 
 package cat.oreilly.localstt;
 
-import static java.lang.String.format;
-
-import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
@@ -30,7 +27,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
-import org.kaldi.RecognitionListener;
+import org.vosk.android.RecognitionListener;
 import org.mozilla.deepspeech.libdeepspeech.DeepSpeechModel;
 import org.mozilla.deepspeech.libdeepspeech.DeepSpeechStreamingState;
 
