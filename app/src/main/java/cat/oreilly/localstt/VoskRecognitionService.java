@@ -79,7 +79,7 @@ public class VoskRecognitionService extends RecognitionService implements Recogn
                         LibVosk.setLogLevel(LogLevel.INFO);
 
                         Log.i(TAG, "Loading model");
-                        model = new Model(assetDir.toString() + "/vosk-catala");
+                        model = new Model(assetDir.toString() + "/vosk-model-small-ru-0.22");
                     }
 
                     setupRecognizer();

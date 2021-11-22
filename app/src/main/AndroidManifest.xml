@@ -102,23 +102,5 @@
                 android:name="android.speech"
                 android:resource="@xml/recognition_service" />
         </service>
-
-        <service
-            android:name=".DeepSpeechRecognitionService"
-            android:icon="@drawable/ic_service_trigger"
-            android:label="@string/deepspeech_recognition_service"
-            android:permission="android.permission.RECORD_AUDIO">
-            <intent-filter>
-
-                <!-- The constant value is defined at RecognitionService.SERVICE_INTERFACE. -->
-                <action android:name="android.speech.RecognitionService" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.speech"
-                android:resource="@xml/recognition_service" />
-        </service>
     </application>
 </manifest>
