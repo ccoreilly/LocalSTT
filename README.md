@@ -1,6 +1,6 @@
 # LocalSTT
 
-(Jump to [english](#[English]))
+(Jump to [English](#English))
 
 ### [Català]
 
