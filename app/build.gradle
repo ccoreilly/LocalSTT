@@ -12,6 +12,9 @@ repositories {
 }
 
 android {
+    lintOptions {
+        abortOnError false
+    }
     compileSdkVersion 30
     defaultConfig {
         applicationId "cat.oreilly.localstt"
@@ -36,7 +39,6 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'net.java.dev.jna:jna:5.8.0@aar'
     implementation 'com.google.code.gson:gson:2.8.7'
-    implementation 'org.mozilla.deepspeech:libdeepspeech:0.8.2'
     implementation 'com.github.gkonovalov:android-vad:1.0.0'
 }
 
