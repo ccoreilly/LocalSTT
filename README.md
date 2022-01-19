@@ -22,7 +22,11 @@ LocalSTT should work with all keyboards and applications implementing speech rec
 - [Kõnele](https://github.com/Kaljurand/K6nele)
 - [SwiftKey](https://www.swiftkey.com)
 
-You can download a pre-built binary with Vosk and DeepSpeech models for catalan [here](https://github.com/ccoreilly/LocalSTT/releases/download/2020-12-03/localstt.apk).
+You can download a pre-built binary with Vosk models for:
+ - English: https://github.com/ewheelerinc/LocalSTT/releases / [LocalSTT-en-us.apk](https://github.com/ewheelerinc/LocalSTT/releases/download/2022-01-18-en-US/LocalSTT-en-us.apk)
+
+and also with DeepSpeech models here:
+ - Catalan: [here](https://github.com/ccoreilly/LocalSTT/releases/download/2020-12-03/localstt.apk).
 
 If you want to use the application with your language just replace the models in `app/src/main/assets/sync/vosk-model/` with a package from https://alphacephei.com/vosk/models and rebuild the application.
 
@@ -36,6 +40,7 @@ If you want to use the application with your language just replace the models in
 
 - Does not work with Google's keyboard "GBoard".
 - Not all record applications read the voice text properly, there must be another way---and if you know how, it is probably a trivial fix.
+- DeepSpeech models were removed, they didn't build!  Maybe it can be fixed?
 
 #### Future Work
 
